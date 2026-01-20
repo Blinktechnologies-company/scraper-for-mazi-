@@ -3,6 +3,7 @@
 ## Fixed Issues
 ✅ Removed empty `railway.json` file that was causing JSON parsing error
 ✅ Updated Dockerfile to use Railway's `$PORT` environment variable
+✅ Fixed Chrome installation to use modern GPG key method (apt-key is deprecated)
 ✅ Railway will auto-detect the Dockerfile
 
 ## Deployment Steps
