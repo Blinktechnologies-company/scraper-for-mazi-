@@ -3,7 +3,9 @@ builder = "DOCKERFILE"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "uvicorn api:app --host 0.0.0.0 --port $PORT"
+# Don't override the CMD - let Dockerfile handle it
+# startCommand is commented out to use Dockerfile CMD
+# startCommand = "python3 start.py"
 healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "ON_FAILURE"
