@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Install Chrome and ChromeDriver dependencies
+# Install Chrome and ChromeDriver dependencies (updated for Debian Trixie - no apt-key)
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
