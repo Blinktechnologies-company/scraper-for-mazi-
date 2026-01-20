@@ -73,10 +73,20 @@ class ScraperStatus(BaseModel):
 # Initialize database on startup
 @app.on_event("startup")
 async def startup_event():
-    init_db()
-    start_scheduler()
+    """Initialize database and start scheduler"""
+    try:
+        init_db()
+        print("✓ Database initialized")
+    except Exception as e:
+        print(f"⚠ Database initialization warning: {e}")
+    
+    try:
+        start_scheduler()
+        print("✓ Background scheduler started")
+    except Exception as e:
+        print(f"⚠ Scheduler start warning: {e}")
+    
     print("✓ API started successfully")
-    print("✓ Background scheduler started")
 
 @app.on_event("shutdown")
 async def shutdown_event():
@@ -271,12 +281,29 @@ async def get_combined_events():
 # Health check
 @app.get("/health")
 async def health_check():
-    scheduler_info = get_scheduler_status()
+    """Simple health check endpoint"""
     return {
         "status": "healthy",
-        "timestamp": datetime.utcnow(),
-        "scheduler": scheduler_info
+        "timestamp": datetime.utcnow().isoformat()
     }
+
+# Detailed health check with scheduler info
+@app.get("/health/detailed")
+async def detailed_health_check():
+    """Detailed health check with scheduler information"""
+    try:
+        scheduler_info = get_scheduler_status()
+        return {
+            "status": "healthy",
+            "timestamp": datetime.utcnow().isoformat(),
+            "scheduler": scheduler_info
+        }
+    except Exception as e:
+        return {
+            "status": "degraded",
+            "timestamp": datetime.utcnow().isoformat(),
+            "error": str(e)
+        }
 
 if __name__ == "__main__":
     import uvicorn
