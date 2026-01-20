@@ -23,8 +23,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Make start script executable
-RUN chmod +x start.sh
+# Make start scripts executable
+RUN chmod +x start.sh start.py
 
 # Create directory for scraped data
 RUN mkdir -p scraped_data
@@ -37,5 +37,5 @@ ENV HEADLESS_MODE=True
 ENV CHROME_DRIVER_PATH=auto
 ENV SCRAPER_RUN_ON_STARTUP=False
 
-# Run the application
-CMD ["./start.sh"]
+# Run the application using Python startup script
+CMD ["python3", "start.py"]
