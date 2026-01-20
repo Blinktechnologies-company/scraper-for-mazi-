@@ -13,9 +13,25 @@ load_dotenv()
 # Database URL from environment or default to SQLite
 DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///./events_deals.db')
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if 'sqlite' in DATABASE_URL else {})
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
+# Handle Railway's postgres:// URL format (needs to be postgresql://)
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+
+print(f"📊 Connecting to database: {DATABASE_URL[:20]}...")
+
+try:
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False} if 'sqlite' in DATABASE_URL else {})
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    Base = declarative_base()
+    print("✓ Database engine created successfully")
+except Exception as e:
+    print(f"⚠ Database engine creation error: {e}")
+    # Fallback to SQLite if PostgreSQL fails
+    DATABASE_URL = 'sqlite:///./events_deals.db'
+    engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
+    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+    Base = declarative_base()
+    print("✓ Fallback to SQLite database")
 
 class Event(Base):
     """Event model"""

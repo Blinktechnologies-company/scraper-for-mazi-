@@ -75,10 +75,17 @@ class ScraperStatus(BaseModel):
 async def startup_event():
     """Initialize database and start scheduler"""
     import os
-    print(f"🚀 Starting API...")
+    import sys
+    
+    print("="*60)
+    print("🚀 Starting Events & Deals API")
+    print("="*60)
     print(f"📊 DATABASE_URL: {'Set' if os.getenv('DATABASE_URL') else 'Not set (using SQLite)'}")
     print(f"🌐 PORT: {os.getenv('PORT', '8000')}")
     print(f"🤖 HEADLESS_MODE: {os.getenv('HEADLESS_MODE', 'True')}")
+    print(f"📅 SCRAPER_SCHEDULE: {os.getenv('SCRAPER_SCHEDULE', 'daily')}")
+    print(f"🔄 SCRAPER_RUN_ON_STARTUP: {os.getenv('SCRAPER_RUN_ON_STARTUP', 'False')}")
+    print("="*60)
     
     try:
         init_db()
@@ -87,14 +94,20 @@ async def startup_event():
         print(f"⚠ Database initialization error: {e}")
         import traceback
         traceback.print_exc()
+        # Don't exit - continue with degraded functionality
     
     try:
         start_scheduler()
         print("✓ Background scheduler started")
     except Exception as e:
         print(f"⚠ Scheduler start warning: {e}")
+        # Don't exit - API can still work without scheduler
     
+    print("="*60)
     print("✓ API started successfully")
+    print("✓ Ready to accept requests")
+    print("="*60)
+    sys.stdout.flush()
 
 @app.on_event("shutdown")
 async def shutdown_event():

@@ -23,6 +23,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
+# Make start script executable
+RUN chmod +x start.sh
+
 # Create directory for scraped data
 RUN mkdir -p scraped_data
 
@@ -34,5 +37,5 @@ ENV HEADLESS_MODE=True
 ENV CHROME_DRIVER_PATH=auto
 ENV SCRAPER_RUN_ON_STARTUP=False
 
-# Run the application (use PORT env var from Railway, default to 8000)
-CMD ["sh", "-c", "uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Run the application
+CMD ["./start.sh"]
