@@ -74,11 +74,19 @@ class ScraperStatus(BaseModel):
 @app.on_event("startup")
 async def startup_event():
     """Initialize database and start scheduler"""
+    import os
+    print(f"🚀 Starting API...")
+    print(f"📊 DATABASE_URL: {'Set' if os.getenv('DATABASE_URL') else 'Not set (using SQLite)'}")
+    print(f"🌐 PORT: {os.getenv('PORT', '8000')}")
+    print(f"🤖 HEADLESS_MODE: {os.getenv('HEADLESS_MODE', 'True')}")
+    
     try:
         init_db()
         print("✓ Database initialized")
     except Exception as e:
-        print(f"⚠ Database initialization warning: {e}")
+        print(f"⚠ Database initialization error: {e}")
+        import traceback
+        traceback.print_exc()
     
     try:
         start_scheduler()
@@ -108,6 +116,12 @@ async def root():
             "scheduler": "/scheduler/status"
         }
     }
+
+# Simple ping endpoint
+@app.get("/ping")
+async def ping():
+    """Ultra-simple ping endpoint for testing"""
+    return {"status": "ok"}
 
 # Events endpoints
 @app.get("/events", response_model=List[EventResponse])

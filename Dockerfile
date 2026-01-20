@@ -32,6 +32,7 @@ EXPOSE 8000
 # Set environment variables
 ENV HEADLESS_MODE=True
 ENV CHROME_DRIVER_PATH=auto
+ENV SCRAPER_RUN_ON_STARTUP=False
 
 # Run the application (use PORT env var from Railway, default to 8000)
-CMD uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}
+CMD ["sh", "-c", "uvicorn api:app --host 0.0.0.0 --port ${PORT:-8000}"]
